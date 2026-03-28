@@ -1,0 +1,1115 @@
+<html>
+<head>
+    <meta charset="UTF-8" name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <link rel="shortcut icon"
+        href="https://raw.githubusercontent.com/nightwolfss/lembretes/refs/heads/main/imagens/VL%20MakesIcone2.png"
+        type="image/x-icon">
+    <title>Catálogo</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+
+    <style>
+        body {
+            background: #FFF;
+        }
+
+        /* CARD */
+        .card-produto {
+            border-radius: 16px;
+            border: 1px solid #000;
+            transition: 0.25s;
+        }
+
+        .card-produto:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        /* IMAGEM */
+        .produto-img {
+            height: 220px;
+            width: 100%;
+            object-fit: contain;
+            background: #fff1f1;
+            padding: 20px;
+            cursor: zoom-in;
+            border-radius: 14px;
+        }
+
+        /* TEXTO */
+        .produto-nome {
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .descricao {
+            font-size: 0.9rem;
+            color: #666;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            min-height: 60px;
+            cursor: help;
+        }
+
+        .produto-preco {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: #198754;
+            margin-top: 6px;
+        }
+
+        .categoria {
+            font-size: 0.8rem;
+            font-weight: bold;
+            color: #ff9800;
+        }
+
+        /* ANIMAÇÃO PRODUTO */
+        .fly-img {
+            position: fixed;
+            z-index: 9999;
+            transition: all 0.8s ease;
+            pointer-events: none;
+        }
+
+        /* ANIMAÇÃO PREMIUM */
+        @keyframes pulsePremium {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 0 0 rgba(255, 193, 7, 0);
+            }
+
+            50% {
+                transform: scale(1.06);
+                box-shadow: 0 0 14px rgba(255, 193, 7, 0.9);
+            }
+
+            100% {
+                transform: scale(1);
+                box-shadow: 0 0 0 rgba(255, 193, 7, 0);
+            }
+        }
+
+        .premium-pulse {
+            animation: pulsePremium 2s infinite;
+        }
+
+        /* BOTÃO FLUTUANTE */
+        #chatToggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #0d6efd;
+            color: white;
+            font-size: 22px;
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            z-index: 999;
+        }
+
+        /* CHAT */
+        #chatIA {
+            position: fixed;
+            bottom: 85px;
+            right: 20px;
+            width: 420px;
+            height: 620px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            z-index: 999;
+        }
+
+        /* Responsivo */
+        @media (max-width:768px) {
+            #chatIA {
+                bottom: 15px;
+                right: 15px;
+                left: 15px;
+                top: 15px;
+                width: auto;
+                height: auto;
+                max-height: calc(100% - 30px);
+                max-width: calc(100% - 30px);
+            }
+        }
+
+        /* FECHADO */
+        .chat-fechado {
+            transform: scale(0);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* HEADER */
+        .chat-header {
+            background: #0d6efd;
+            color: white;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            font-weight: bold;
+        }
+
+        /* BODY */
+        .chat-body {
+            flex: 1;
+            padding: 10px;
+            overflow-y: auto;
+            font-size: 14px;
+        }
+
+        /* FOOTER */
+        .chat-footer {
+            display: flex;
+            border-top: 1px solid #ddd;
+        }
+
+        .chat-footer input {
+            flex: 1;
+            border: none;
+            padding: 10px;
+        }
+
+        .chat-footer button {
+            border: none;
+            background: #0d6efd;
+            color: white;
+            padding: 10px 15px;
+        }
+
+        /* CORES MENSAGENS */
+        .chat-user {
+            background: #e7f1ff;
+            color: #0d6efd;
+            padding: 6px 10px;
+            border-radius: 10px;
+            margin-bottom: 5px;
+        }
+
+        .chat-ia {
+            background: #fff4e6;
+            color: #fd7e14;
+            padding: 6px 10px;
+            border-radius: 10px;
+            margin-bottom: 5px;
+        }
+
+        /* ANIMAÇÃO DIGITANDO */
+        .typing span {
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            margin: 0 1px;
+            background: #333;
+            border-radius: 50%;
+            animation: blink 1.4s infinite both;
+        }
+
+        .typing span:nth-child(2) {
+            animation-delay: .2s;
+        }
+
+        .typing span:nth-child(3) {
+            animation-delay: .4s;
+        }
+
+        @keyframes blink {
+            0% {
+                opacity: .2;
+            }
+
+            20% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: .2;
+            }
+        }
+
+        .btn-carrinho {
+            background-color: #fbbc9d;
+            border-color: #fbbc9d;
+            color: #5a2e1f;
+            transition: all 0.2s ease;
+        }
+
+        /* Hover (tom mais escuro) */
+        .btn-carrinho:hover {
+            background-color: #f3a989;
+            border-color: #f3a989;
+            color: #fff;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Clique */
+        .btn-carrinho:active {
+            background-color: #e89573;
+            border-color: #e89573;
+        }
+
+        /* Focus */
+        .btn-carrinho:focus {
+            box-shadow: 0 0 0 0.2rem rgba(251, 188, 157, 0.5);
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <div class="container py-4">
+        <!-- HEADER -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div class="d-flex align-items-center gap-2">
+                <img src="https://raw.githubusercontent.com/nightwolfss/lembretes/refs/heads/main/imagens/VL%20Makes3.png"
+                    class="logo-site" width="150px">
+            </div>
+            <div class="d-flex align-items-center gap-2">
+
+                <button id="btnPremium" class="btn btn-warning premium-pulse" onclick="togglePremium()">⭐
+                    Premium</button>
+                <button class="btn btn-outline-dark position-relative" data-bs-toggle="modal"
+                    data-bs-target="#carrinhoModal">
+                    🛒 <span id="contadorCarrinho"
+                        class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">0</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="input-group mb-4">
+            <span class="input-group-text">🔎</span>
+            <input type="text" class="form-control" placeholder="Buscar produto..."
+                oninput="buscarProdutos(this.value)">
+        </div>
+
+        <!-- PRODUTOS -->
+        <div class="row g-4">
+            <div class="col-6 col-md-6 col-lg-4 col-xl-3 produto-card">
+                <div class="card card-produto h-100">
+                    <img src="https://cdn.awsli.com.br/2500x2500/1370/1370661/produto/135790075/160659-1600-1600--1--2f3nxfdt6c.webp"
+                        class="produto-img imagem-click" data-bs-toggle="modal" data-bs-target="#imagemModal"
+                        data-img="https://cdn.awsli.com.br/2500x2500/1370/1370661/produto/135790075/160659-1600-1600--1--2f3nxfdt6c.webp">
+                    <div class="card-body d-flex flex-column">
+                        <div class="produto-nome">Batom</div>
+                        <div class="descricao" data-bs-toggle="tooltip"
+                            data-bs-original-title="Lindo batom para o dia a dia. Cores fantásticas.">Lindo batom para o
+                            dia a dia. Cores fantásticas.</div>
+                        <div class="produto-preco mt-2">R$ 7,50</div>
+                        <div class="categoria"></div>
+                        <div class="mt-auto d-grid mt-3">
+                            <button class="btn btn-carrinho add-carrinho btn-secondary" data-id="1" data-nome="Batom"
+                                data-preco="7.50"
+                                data-imagem="https://cdn.awsli.com.br/2500x2500/1370/1370661/produto/135790075/160659-1600-1600--1--2f3nxfdt6c.webp"
+                                disabled="disabled">Esgotado</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-6 col-lg-4 col-xl-3 produto-card">
+                <div class="card card-produto h-100">
+                    <img src="https://dmvfarma.vtexassets.com/arquivos/ids/219497-1200-auto?v=638185479442430000&amp;width=1200&amp;height=auto&amp;aspect=true"
+                        class="produto-img imagem-click" data-bs-toggle="modal" data-bs-target="#imagemModal"
+                        data-img="https://dmvfarma.vtexassets.com/arquivos/ids/219497-1200-auto?v=638185479442430000&amp;width=1200&amp;height=auto&amp;aspect=true">
+                    <div class="card-body d-flex flex-column">
+                        <div class="produto-nome">Mascara de Cílios</div>
+                        <div class="descricao" data-bs-toggle="tooltip"
+                            data-bs-original-title="Define, alonga e proporciona volume imediato para um olhar mais aberto e expressivo.">
+                            Define, alonga e proporciona volume imediato para um olhar mais aberto e expressivo.</div>
+                        <div class="produto-preco mt-2">R$ 6,49</div>
+                        <div class="categoria"></div>
+                        <div class="mt-auto d-grid mt-3">
+                            <button class="btn btn-carrinho add-carrinho btn-carrinho" data-id="3"
+                                data-nome="Mascara de Cílios" data-preco="6.49"
+                                data-imagem="https://dmvfarma.vtexassets.com/arquivos/ids/219497-1200-auto?v=638185479442430000&amp;width=1200&amp;height=auto&amp;aspect=true">🛒
+                                Adicionar ao carrinho</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-6 col-lg-4 col-xl-3 produto-card">
+                <div class="card card-produto h-100">
+                    <img src="https://www.cosmetis.com.br/media/catalog/product/cache/26d4a05fa16341dea4470cb3b852123c/r/i/rimmelmaxiblush3wildcard.jpg"
+                        class="produto-img imagem-click" data-bs-toggle="modal" data-bs-target="#imagemModal"
+                        data-img="https://www.cosmetis.com.br/media/catalog/product/cache/26d4a05fa16341dea4470cb3b852123c/r/i/rimmelmaxiblush3wildcard.jpg">
+                    <div class="card-body d-flex flex-column">
+                        <div class="produto-nome">Blush em Pó</div>
+                        <div class="descricao" data-bs-toggle="tooltip"
+                            data-bs-original-title="Garante um aspecto saudável e radiante às maçãs do rosto com uma textura leve e fácil de esfumar.">
+                            Garante um aspecto saudável e radiante às maçãs do rosto com uma textura leve e fácil de
+                            esfumar.</div>
+                        <div class="produto-preco mt-2">R$ 7,45</div>
+                        <div class="categoria"></div>
+                        <div class="mt-auto d-grid mt-3">
+                            <button class="btn btn-carrinho add-carrinho btn-carrinho" data-id="4"
+                                data-nome="Blush em Pó" data-preco="7.45"
+                                data-imagem="https://www.cosmetis.com.br/media/catalog/product/cache/26d4a05fa16341dea4470cb3b852123c/r/i/rimmelmaxiblush3wildcard.jpg">🛒
+                                Adicionar ao carrinho</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-6 col-lg-4 col-xl-3 produto-card" data-categoria="Premium" style="display: none;">
+                <div class="card card-produto h-100">
+                    <img src="https://lojaslivia.fbitsstatic.net/img/p/agua-micelar-loreal-paris-200-ml-69926/255048.jpg"
+                        class="produto-img imagem-click" data-bs-toggle="modal" data-bs-target="#imagemModal"
+                        data-img="https://lojaslivia.fbitsstatic.net/img/p/agua-micelar-loreal-paris-200-ml-69926/255048.jpg">
+                    <div class="card-body d-flex flex-column">
+                        <div class="produto-nome">Água Miscelar</div>
+                        <div class="descricao" data-bs-toggle="tooltip"
+                            data-bs-original-title="Limpa profundamente todas as impurezas das profundidades dos seus poros.">
+                            Limpa profundamente todas as impurezas das profundidades dos seus poros.</div>
+                        <div class="produto-preco mt-2">R$ 10,20</div>
+                        <div class="categoria">Premium</div>
+                        <div class="mt-auto d-grid mt-3">
+                            <button class="btn btn-carrinho add-carrinho btn-carrinho" data-id="5"
+                                data-nome="Água Miscelar" data-preco="10.20"
+                                data-imagem="https://lojaslivia.fbitsstatic.net/img/p/agua-micelar-loreal-paris-200-ml-69926/255048.jpg">🛒
+                                Adicionar ao carrinho</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-6 col-lg-4 col-xl-3 produto-card">
+                <div class="card card-produto h-100">
+                    <img src="https://cdn.sistemawbuy.com.br/arquivos/cad5cc7133685cdd8d0d7880d11cba96/produtos/68d2ccf42e485/po-translucido-ultrafino-1-68d33b4197040.jpg"
+                        class="produto-img imagem-click" data-bs-toggle="modal" data-bs-target="#imagemModal"
+                        data-img="https://cdn.sistemawbuy.com.br/arquivos/cad5cc7133685cdd8d0d7880d11cba96/produtos/68d2ccf42e485/po-translucido-ultrafino-1-68d33b4197040.jpg">
+                    <div class="card-body d-flex flex-column">
+                        <div class="produto-nome">Pó Translúcido Fino</div>
+                        <div class="descricao" data-bs-toggle="tooltip"
+                            data-bs-original-title="O segredo invisível para pele impecável.">O segredo invisível para
+                            pele impecável.</div>
+                        <div class="produto-preco mt-2">R$ 9,49</div>
+                        <div class="categoria"></div>
+                        <div class="mt-auto d-grid mt-3">
+                            <button class="btn btn-carrinho add-carrinho btn-carrinho" data-id="6"
+                                data-nome="Pó Translúcido Fino" data-preco="9.49"
+                                data-imagem="https://cdn.sistemawbuy.com.br/arquivos/cad5cc7133685cdd8d0d7880d11cba96/produtos/68d2ccf42e485/po-translucido-ultrafino-1-68d33b4197040.jpg">🛒
+                                Adicionar ao carrinho</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-6 col-lg-4 col-xl-3 produto-card">
+                <div class="card card-produto h-100">
+                    <img src="https://catharinehill.com.br/wp-content/uploads/2025/08/blush-stick-punch-catharine-hill.png"
+                        class="produto-img imagem-click" data-bs-toggle="modal" data-bs-target="#imagemModal"
+                        data-img="https://catharinehill.com.br/wp-content/uploads/2025/08/blush-stick-punch-catharine-hill.png">
+                    <div class="card-body d-flex flex-column">
+                        <div class="produto-nome">Blush Stick Prático</div>
+                        <div class="descricao" data-bs-toggle="tooltip"
+                            data-bs-original-title="Portátil e rápido, desliza facilmente e garante cor instantânea em segundos.">
+                            Portátil e rápido, desliza facilmente e garante cor instantânea em segundos.</div>
+                        <div class="produto-preco mt-2">R$ 9,35</div>
+                        <div class="categoria"></div>
+                        <div class="mt-auto d-grid mt-3">
+                            <button class="btn btn-carrinho add-carrinho btn-carrinho" data-id="7"
+                                data-nome="Blush Stick Prático" data-preco="9.35"
+                                data-imagem="https://catharinehill.com.br/wp-content/uploads/2025/08/blush-stick-punch-catharine-hill.png">🛒
+                                Adicionar ao carrinho</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-6 col-lg-4 col-xl-3 produto-card">
+                <div class="card card-produto h-100">
+                    <img src="https://tfczxi.vtexassets.com/arquivos/ids/187745/cor-01-2.jpg"
+                        class="produto-img imagem-click" data-bs-toggle="modal" data-bs-target="#imagemModal"
+                        data-img="https://tfczxi.vtexassets.com/arquivos/ids/187745/cor-01-2.jpg">
+                    <div class="card-body d-flex flex-column">
+                        <div class="produto-nome">Blush Marmorizado</div>
+                        <div class="descricao" data-bs-toggle="tooltip"
+                            data-bs-original-title="Mistura de tons que se combinam em cada aplicação, criando profundidade única e acabamento sofisticado.">
+                            Mistura de tons que se combinam em cada aplicação, criando profundidade única e acabamento
+                            sofisticado.</div>
+                        <div class="produto-preco mt-2">R$ 7,95</div>
+                        <div class="categoria"></div>
+                        <div class="mt-auto d-grid mt-3">
+                            <button class="btn btn-carrinho add-carrinho btn-carrinho" data-id="8"
+                                data-nome="Blush Marmorizado" data-preco="7.95"
+                                data-imagem="https://tfczxi.vtexassets.com/arquivos/ids/187745/cor-01-2.jpg">🛒
+                                Adicionar ao carrinho</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-6 col-lg-4 col-xl-3 produto-card">
+                <div class="card card-produto h-100">
+                    <img src="https://cdn.awsli.com.br/600x1000/2603/2603033/produto/229193260/whatsapp-image-2024-01-04-at-14-33-46-yyv6shrusw.jpeg"
+                        class="produto-img imagem-click" data-bs-toggle="modal" data-bs-target="#imagemModal"
+                        data-img="https://cdn.awsli.com.br/600x1000/2603/2603033/produto/229193260/whatsapp-image-2024-01-04-at-14-33-46-yyv6shrusw.jpeg">
+                    <div class="card-body d-flex flex-column">
+                        <div class="produto-nome">Paleta Neutra Clássica</div>
+                        <div class="descricao" data-bs-toggle="tooltip"
+                            data-bs-original-title="Versátil e atemporal, oferece tons que vão do bege ao marrom profundo, ideais para qualquer ocasião.">
+                            Versátil e atemporal, oferece tons que vão do bege ao marrom profundo, ideais para qualquer
+                            ocasião.</div>
+                        <div class="produto-preco mt-2">R$ 6,45</div>
+                        <div class="categoria"></div>
+                        <div class="mt-auto d-grid mt-3">
+                            <button class="btn btn-carrinho add-carrinho btn-carrinho" data-id="9"
+                                data-nome="Paleta Neutra Clássica" data-preco="6.45"
+                                data-imagem="https://cdn.awsli.com.br/600x1000/2603/2603033/produto/229193260/whatsapp-image-2024-01-04-at-14-33-46-yyv6shrusw.jpeg">🛒
+                                Adicionar ao carrinho</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-6 col-lg-4 col-xl-3 produto-card">
+                <div class="card card-produto h-100">
+                    <img src="https://cdn.awsli.com.br/800x800/1380/1380674/produto/246435566809b867569.jpg"
+                        class="produto-img imagem-click" data-bs-toggle="modal" data-bs-target="#imagemModal"
+                        data-img="https://cdn.awsli.com.br/800x800/1380/1380674/produto/246435566809b867569.jpg">
+                    <div class="card-body d-flex flex-column">
+                        <div class="produto-nome">Lip Balm Colorido</div>
+                        <div class="descricao" data-bs-toggle="tooltip"
+                            data-bs-original-title="Hidratação profunda com um toque de cor suave.">Hidratação profunda
+                            com um toque de cor suave.</div>
+                        <div class="produto-preco mt-2">R$ 4,90</div>
+                        <div class="categoria"></div>
+                        <div class="mt-auto d-grid mt-3">
+                            <button class="btn btn-carrinho add-carrinho btn-secondary" data-id="10"
+                                data-nome="Lip Balm Colorido" data-preco="4.90"
+                                data-imagem="https://cdn.awsli.com.br/800x800/1380/1380674/produto/246435566809b867569.jpg"
+                                disabled="disabled">Esgotado</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-6 col-lg-4 col-xl-3 produto-card" data-categoria="Premium" style="display: none;">
+                <div class="card card-produto h-100">
+                    <img src="https://static.cdnlive.com.br/uploads/724/produto/17423028505384_zoom.jpg"
+                        class="produto-img imagem-click" data-bs-toggle="modal" data-bs-target="#imagemModal"
+                        data-img="https://static.cdnlive.com.br/uploads/724/produto/17423028505384_zoom.jpg">
+                    <div class="card-body d-flex flex-column">
+                        <div class="produto-nome">Base líquida - Base Líquida Ruby Rose</div>
+                        <div class="descricao" data-bs-toggle="tooltip"
+                            data-bs-original-title="Uma base leve e de cobertura uniforme que se adapta facilmente à pele, proporcionando acabamento natural e confortável. Ideal para quem busca praticidade e beleza no dia a dia, mantendo a pele fresca e radiante.">
+                            Uma base leve e de cobertura uniforme que se adapta facilmente à pele, proporcionando
+                            acabamento natural e confortável. Ideal para quem busca praticidade e beleza no dia a dia,
+                            mantendo a pele fresca e radiante.</div>
+                        <div class="produto-preco mt-2">R$ 15,99</div>
+                        <div class="categoria">Premium</div>
+                        <div class="mt-auto d-grid mt-3">
+                            <button class="btn btn-carrinho add-carrinho btn-carrinho" data-id="11"
+                                data-nome="Base líquida - Base Líquida Ruby Rose" data-preco="15.99"
+                                data-imagem="https://static.cdnlive.com.br/uploads/724/produto/17423028505384_zoom.jpg">🛒
+                                Adicionar ao carrinho</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-6 col-lg-4 col-xl-3 produto-card" data-categoria="Premium" style="display: none;">
+                <div class="card card-produto h-100">
+                    <img src="https://static.cdnlive.com.br/uploads/724/produto/17226254187225_detalhe.jpg"
+                        class="produto-img imagem-click" data-bs-toggle="modal" data-bs-target="#imagemModal"
+                        data-img="https://static.cdnlive.com.br/uploads/724/produto/17226254187225_detalhe.jpg">
+                    <div class="card-body d-flex flex-column">
+                        <div class="produto-nome">Batom Líquido Mood Ruby Ros</div>
+                        <div class="descricao" data-bs-toggle="tooltip"
+                            data-bs-original-title="Com textura cremosa e acabamento marcante, esse batom líquido traz cores vibrantes que duram por horas. É perfeito para destacar os lábios com intensidade e confiança, sem perder o conforto.">
+                            Com textura cremosa e acabamento marcante, esse batom líquido traz cores vibrantes que duram
+                            por horas. É perfeito para destacar os lábios com intensidade e confiança, sem perder o
+                            conforto.</div>
+                        <div class="produto-preco mt-2">R$ 12,50</div>
+                        <div class="categoria">Premium</div>
+                        <div class="mt-auto d-grid mt-3">
+                            <button class="btn btn-carrinho add-carrinho btn-carrinho" data-id="13"
+                                data-nome="Batom Líquido Mood Ruby Ros" data-preco="12.50"
+                                data-imagem="https://static.cdnlive.com.br/uploads/724/produto/17226254187225_detalhe.jpg">🛒
+                                Adicionar ao carrinho</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-6 col-lg-4 col-xl-3 produto-card">
+                <div class="card card-produto h-100">
+                    <img src="https://cdn.dooca.store/148163/products/deqfrwayaehy-1.png"
+                        class="produto-img imagem-click" data-bs-toggle="modal" data-bs-target="#imagemModal"
+                        data-img="https://cdn.dooca.store/148163/products/deqfrwayaehy-1.png">
+                    <div class="card-body d-flex flex-column">
+                        <div class="produto-nome"> Gloss Labial Melu Ruby Rose</div>
+                        <div class="descricao" data-bs-toggle="tooltip"
+                            data-bs-original-title="Um gloss que combina brilho espelhado com hidratação suave, deixando os lábios macios e luminosos. Sua fórmula leve garante frescor e um toque glamouroso em qualquer ocasião.">
+                            Um gloss que combina brilho espelhado com hidratação suave, deixando os lábios macios e
+                            luminosos. Sua fórmula leve garante frescor e um toque glamouroso em qualquer ocasião.</div>
+                        <div class="produto-preco mt-2">R$ 9,99</div>
+                        <div class="categoria"></div>
+                        <div class="mt-auto d-grid mt-3">
+                            <button class="btn btn-carrinho add-carrinho btn-carrinho" data-id="14"
+                                data-nome=" Gloss Labial Melu Ruby Rose" data-preco="9.99"
+                                data-imagem="https://cdn.dooca.store/148163/products/deqfrwayaehy-1.png">🛒 Adicionar ao
+                                carrinho</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-6 col-lg-4 col-xl-3 produto-card" data-categoria="Premium" style="display: none;">
+                <div class="card card-produto h-100">
+                    <img src="https://sdcdn.io/mac/br/mac_sku_SGFJ01_1x1_0.png" class="produto-img imagem-click"
+                        data-bs-toggle="modal" data-bs-target="#imagemModal"
+                        data-img="https://sdcdn.io/mac/br/mac_sku_SGFJ01_1x1_0.png">
+                    <div class="card-body d-flex flex-column">
+                        <div class="produto-nome">Delineador</div>
+                        <div class="descricao" data-bs-toggle="tooltip"
+                            data-bs-original-title="O clássico indispensável para realçar o olhar. Com traço firme e pigmentação intensa, permite criar desde linhas discretas até visuais ousados e dramáticos, sempre com precisão.">
+                            O clássico indispensável para realçar o olhar. Com traço firme e pigmentação intensa,
+                            permite criar desde linhas discretas até visuais ousados e dramáticos, sempre com precisão.
+                        </div>
+                        <div class="produto-preco mt-2">R$ 11,50</div>
+                        <div class="categoria">Premium</div>
+                        <div class="mt-auto d-grid mt-3">
+                            <button class="btn btn-carrinho add-carrinho btn-carrinho" data-id="15"
+                                data-nome="Delineador" data-preco="11.50"
+                                data-imagem="https://sdcdn.io/mac/br/mac_sku_SGFJ01_1x1_0.png">🛒 Adicionar ao
+                                carrinho</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-6 col-lg-4 col-xl-3 produto-card">
+                <div class="card card-produto h-100">
+                    <img src="https://images.tcdn.com.br/img/img_prod/548740/pre_venda_beauty_blender_esponja_makeup_esponge_347_1_5978e3a06c1de7f4624d90ccb43548eb.jpg"
+                        class="produto-img imagem-click" data-bs-toggle="modal" data-bs-target="#imagemModal"
+                        data-img="https://images.tcdn.com.br/img/img_prod/548740/pre_venda_beauty_blender_esponja_makeup_esponge_347_1_5978e3a06c1de7f4624d90ccb43548eb.jpg">
+                    <div class="card-body d-flex flex-column">
+                        <div class="produto-nome">Esponja Beauty Blender</div>
+                        <div class="descricao" data-bs-toggle="tooltip"
+                            data-bs-original-title="A ferramenta essencial para quem busca acabamento impecável. Sua textura macia e formato ergonômico permitem aplicar base e corretivo de forma uniforme, garantindo pele natural e sem marcas.">
+                            A ferramenta essencial para quem busca acabamento impecável. Sua textura macia e formato
+                            ergonômico permitem aplicar base e corretivo de forma uniforme, garantindo pele natural e
+                            sem marcas.</div>
+                        <div class="produto-preco mt-2">R$ 7,00</div>
+                        <div class="categoria"></div>
+                        <div class="mt-auto d-grid mt-3">
+                            <button class="btn btn-carrinho add-carrinho btn-carrinho" data-id="16"
+                                data-nome="Esponja Beauty Blender" data-preco="7.00"
+                                data-imagem="https://images.tcdn.com.br/img/img_prod/548740/pre_venda_beauty_blender_esponja_makeup_esponge_347_1_5978e3a06c1de7f4624d90ccb43548eb.jpg">🛒
+                                Adicionar ao carrinho</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-6 col-lg-4 col-xl-3 produto-card" data-categoria="Premium" style="display: none;">
+                <div class="card card-produto h-100">
+                    <img src="https://cdn.sistemawbuy.com.br/arquivos/cad5cc7133685cdd8d0d7880d11cba96/produtos/668dab35e7691/b554be9b70-668dab6f1be5d.jpg"
+                        class="produto-img imagem-click" data-bs-toggle="modal" data-bs-target="#imagemModal"
+                        data-img="https://cdn.sistemawbuy.com.br/arquivos/cad5cc7133685cdd8d0d7880d11cba96/produtos/668dab35e7691/b554be9b70-668dab6f1be5d.jpg">
+                    <div class="card-body d-flex flex-column">
+                        <div class="produto-nome">Fixador de Maquiagem (Spray)</div>
+                        <div class="descricao" data-bs-toggle="tooltip"
+                            data-bs-original-title="Um aliado invisível que prolonga a duração da maquiagem, mantendo tudo no lugar com leve frescor.">
+                            Um aliado invisível que prolonga a duração da maquiagem, mantendo tudo no lugar com leve
+                            frescor.</div>
+                        <div class="produto-preco mt-2">R$ 25,00</div>
+                        <div class="categoria">Premium</div>
+                        <div class="mt-auto d-grid mt-3">
+                            <button class="btn btn-carrinho add-carrinho btn-carrinho" data-id="17"
+                                data-nome="Fixador de Maquiagem (Spray)" data-preco="25.00"
+                                data-imagem="https://cdn.sistemawbuy.com.br/arquivos/cad5cc7133685cdd8d0d7880d11cba96/produtos/668dab35e7691/b554be9b70-668dab6f1be5d.jpg">🛒
+                                Adicionar ao carrinho</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-6 col-lg-4 col-xl-3 produto-card" data-categoria="Premium" style="display: none;">
+                <div class="card card-produto h-100">
+                    <img src="https://oceane.vtexassets.com/arquivos/ids/206157/AP2001180CUNI_mini_kit_de_pinceis_brush_kit_oceane_2.jpg?v=638846627910570000"
+                        class="produto-img imagem-click" data-bs-toggle="modal" data-bs-target="#imagemModal"
+                        data-img="https://oceane.vtexassets.com/arquivos/ids/206157/AP2001180CUNI_mini_kit_de_pinceis_brush_kit_oceane_2.jpg?v=638846627910570000">
+                    <div class="card-body d-flex flex-column">
+                        <div class="produto-nome">Kit Pincéis de Maquiagem </div>
+                        <div class="descricao" data-bs-toggle="tooltip"
+                            data-bs-original-title="Um conjunto versátil que reúne diferentes formatos e tamanhos de pincéis, ideal para aplicar base, pó, sombra e blush. É o aliado perfeito para quem deseja explorar técnicas e criar looks profissionais.">
+                            Um conjunto versátil que reúne diferentes formatos e tamanhos de pincéis, ideal para aplicar
+                            base, pó, sombra e blush. É o aliado perfeito para quem deseja explorar técnicas e criar
+                            looks profissionais.</div>
+                        <div class="produto-preco mt-2">R$ 35,00</div>
+                        <div class="categoria">Premium</div>
+                        <div class="mt-auto d-grid mt-3">
+                            <button class="btn btn-carrinho add-carrinho btn-carrinho" data-id="18"
+                                data-nome="Kit Pincéis de Maquiagem " data-preco="35.00"
+                                data-imagem="https://oceane.vtexassets.com/arquivos/ids/206157/AP2001180CUNI_mini_kit_de_pinceis_brush_kit_oceane_2.jpg?v=638846627910570000">🛒
+                                Adicionar ao carrinho</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-6 col-lg-4 col-xl-3 produto-card" data-categoria="Premium" style="display: none;">
+                <div class="card card-produto h-100">
+                    <img src="https://oceane.vtexassets.com/arquivos/ids/216675/AP2001157CO039F_corretivo_liquido_concealer_oceane_edition_medium_light_1.jpg?v=638961235096570000"
+                        class="produto-img imagem-click" data-bs-toggle="modal" data-bs-target="#imagemModal"
+                        data-img="https://oceane.vtexassets.com/arquivos/ids/216675/AP2001157CO039F_corretivo_liquido_concealer_oceane_edition_medium_light_1.jpg?v=638961235096570000">
+                    <div class="card-body d-flex flex-column">
+                        <div class="produto-nome">Corretivo Líquido </div>
+                        <div class="descricao" data-bs-toggle="tooltip"
+                            data-bs-original-title="Com fórmula fluida e cobertura ajustável, disfarça olheiras e pequenas imperfeições sem pesar. Sua textura leve se funde à pele, proporcionando acabamento natural e duradouro.">
+                            Com fórmula fluida e cobertura ajustável, disfarça olheiras e pequenas imperfeições sem
+                            pesar. Sua textura leve se funde à pele, proporcionando acabamento natural e duradouro.
+                        </div>
+                        <div class="produto-preco mt-2">R$ 15,00</div>
+                        <div class="categoria">Premium</div>
+                        <div class="mt-auto d-grid mt-3">
+                            <button class="btn btn-carrinho add-carrinho btn-carrinho" data-id="19"
+                                data-nome="Corretivo Líquido " data-preco="15.00"
+                                data-imagem="https://oceane.vtexassets.com/arquivos/ids/216675/AP2001157CO039F_corretivo_liquido_concealer_oceane_edition_medium_light_1.jpg?v=638961235096570000">🛒
+                                Adicionar ao carrinho</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-6 col-lg-4 col-xl-3 produto-card">
+                <div class="card card-produto h-100">
+                    <img src="https://jolestore.com/cdn/shop/files/CiliosPosticos.webp?v=1726685698"
+                        class="produto-img imagem-click" data-bs-toggle="modal" data-bs-target="#imagemModal"
+                        data-img="https://jolestore.com/cdn/shop/files/CiliosPosticos.webp?v=1726685698">
+                    <div class="card-body d-flex flex-column">
+                        <div class="produto-nome">Cílios postiços</div>
+                        <div class="descricao" data-bs-toggle="tooltip"
+                            data-bs-original-title="O toque final para um olhar impactante. Conferem volume e comprimento instantâneo, transformando qualquer maquiagem em uma produção sofisticada e marcante.">
+                            O toque final para um olhar impactante. Conferem volume e comprimento instantâneo,
+                            transformando qualquer maquiagem em uma produção sofisticada e marcante.</div>
+                        <div class="produto-preco mt-2">R$ 10,00</div>
+                        <div class="categoria"></div>
+                        <div class="mt-auto d-grid mt-3">
+                            <button class="btn btn-carrinho add-carrinho btn-carrinho" data-id="20"
+                                data-nome="Cílios postiços" data-preco="10.00"
+                                data-imagem="https://jolestore.com/cdn/shop/files/CiliosPosticos.webp?v=1726685698">🛒
+                                Adicionar ao carrinho</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-6 col-lg-4 col-xl-3 produto-card" data-categoria="Premium" style="display: none;">
+                <div class="card card-produto h-100">
+                    <img src="https://cdn.sistemawbuy.com.br/arquivos/92973f7262ecbd3583db89d2428a6ba5/produtos/68af6e91af405/34110d42895ada80d6bd18603ab50e69-68af6ecda1781.png"
+                        class="produto-img imagem-click" data-bs-toggle="modal" data-bs-target="#imagemModal"
+                        data-img="https://cdn.sistemawbuy.com.br/arquivos/92973f7262ecbd3583db89d2428a6ba5/produtos/68af6e91af405/34110d42895ada80d6bd18603ab50e69-68af6ecda1781.png">
+                    <div class="card-body d-flex flex-column">
+                        <div class="produto-nome">Tônico facial </div>
+                        <div class="descricao" data-bs-toggle="tooltip"
+                            data-bs-original-title="Um cuidado essencial para preparar a pele antes da maquiagem. Refresca, equilibra e ajuda a remover impurezas, deixando o rosto revitalizado e pronto para receber os próximos passos da rotina de beleza.">
+                            Um cuidado essencial para preparar a pele antes da maquiagem. Refresca, equilibra e ajuda a
+                            remover impurezas, deixando o rosto revitalizado e pronto para receber os próximos passos da
+                            rotina de beleza.</div>
+                        <div class="produto-preco mt-2">R$ 30,00</div>
+                        <div class="categoria">Premium</div>
+                        <div class="mt-auto d-grid mt-3">
+                            <button class="btn btn-carrinho add-carrinho btn-carrinho" data-id="21"
+                                data-nome="Tônico facial " data-preco="30.00"
+                                data-imagem="https://cdn.sistemawbuy.com.br/arquivos/92973f7262ecbd3583db89d2428a6ba5/produtos/68af6e91af405/34110d42895ada80d6bd18603ab50e69-68af6ecda1781.png">🛒
+                                Adicionar ao carrinho</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-6 col-lg-4 col-xl-3 produto-card" data-categoria="Premium" style="display: none;">
+                <div class="card card-produto h-100">
+                    <img src="https://cdn.awsli.com.br/600x1000/404/404800/produto/230483506/mousse-de-limpeza-sabonete-facial--cido-hialur-nico-lovely-face-beautiful-fb398-72vu8m7kwn.png"
+                        class="produto-img imagem-click" data-bs-toggle="modal" data-bs-target="#imagemModal"
+                        data-img="https://cdn.awsli.com.br/600x1000/404/404800/produto/230483506/mousse-de-limpeza-sabonete-facial--cido-hialur-nico-lovely-face-beautiful-fb398-72vu8m7kwn.png">
+                    <div class="card-body d-flex flex-column">
+                        <div class="produto-nome">Sabonete facial</div>
+                        <div class="descricao" data-bs-toggle="tooltip"
+                            data-bs-original-title="Limpeza suave que remove impurezas e oleosidade, deixando a pele fresca e pronta para receber cuidados ou maquiagem.">
+                            Limpeza suave que remove impurezas e oleosidade, deixando a pele fresca e pronta para
+                            receber cuidados ou maquiagem.</div>
+                        <div class="produto-preco mt-2">R$ 18,00</div>
+                        <div class="categoria">Premium</div>
+                        <div class="mt-auto d-grid mt-3">
+                            <button class="btn btn-carrinho add-carrinho btn-carrinho" data-id="22"
+                                data-nome="Sabonete facial" data-preco="18.00"
+                                data-imagem="https://cdn.awsli.com.br/600x1000/404/404800/produto/230483506/mousse-de-limpeza-sabonete-facial--cido-hialur-nico-lovely-face-beautiful-fb398-72vu8m7kwn.png">🛒
+                                Adicionar ao carrinho</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-6 col-lg-4 col-xl-3 produto-card" data-categoria="Premium" style="display: none;">
+                <div class="card card-produto h-100">
+                    <img src="https://epocacosmeticos.vteximg.com.br/arquivos/ids/536019-800-800/paleta-de-contorno-em-po-rk-by-kiss-3d-contour-artist-powder--2-.jpg"
+                        class="produto-img imagem-click" data-bs-toggle="modal" data-bs-target="#imagemModal"
+                        data-img="https://epocacosmeticos.vteximg.com.br/arquivos/ids/536019-800-800/paleta-de-contorno-em-po-rk-by-kiss-3d-contour-artist-powder--2-.jpg">
+                    <div class="card-body d-flex flex-column">
+                        <div class="produto-nome">Paleta de contorno</div>
+                        <div class="descricao" data-bs-toggle="tooltip"
+                            data-bs-original-title="Conjunto versátil de tons que ajuda a definir e realçar os traços do rosto, criando profundidade e equilíbrio com praticidade.">
+                            Conjunto versátil de tons que ajuda a definir e realçar os traços do rosto, criando
+                            profundidade e equilíbrio com praticidade.</div>
+                        <div class="produto-preco mt-2">R$ 30,00</div>
+                        <div class="categoria">Premium</div>
+                        <div class="mt-auto d-grid mt-3">
+                            <button class="btn btn-carrinho add-carrinho btn-carrinho" data-id="23"
+                                data-nome="Paleta de contorno" data-preco="30.00"
+                                data-imagem="https://epocacosmeticos.vteximg.com.br/arquivos/ids/536019-800-800/paleta-de-contorno-em-po-rk-by-kiss-3d-contour-artist-powder--2-.jpg">🛒
+                                Adicionar ao carrinho</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-6 col-lg-4 col-xl-3 produto-card" data-categoria="Premium" style="display: none;">
+                <div class="card card-produto h-100">
+                    <img src="https://www.cosmetis.com.br/media/catalog/product/cache/26d4a05fa16341dea4470cb3b852123c/7/7/7745856-maybelline_ink_vinyl_110.jpg"
+                        class="produto-img imagem-click" data-bs-toggle="modal" data-bs-target="#imagemModal"
+                        data-img="https://www.cosmetis.com.br/media/catalog/product/cache/26d4a05fa16341dea4470cb3b852123c/7/7/7745856-maybelline_ink_vinyl_110.jpg">
+                    <div class="card-body d-flex flex-column">
+                        <div class="produto-nome">Batom SuperStay Maybelline</div>
+                        <div class="descricao" data-bs-toggle="tooltip"
+                            data-bs-original-title="Cor intensa e acabamento matte que dura o dia inteiro, mantendo os lábios vibrantes sem precisar de retoques constantes.">
+                            Cor intensa e acabamento matte que dura o dia inteiro, mantendo os lábios vibrantes sem
+                            precisar de retoques constantes.</div>
+                        <div class="produto-preco mt-2">R$ 30,00</div>
+                        <div class="categoria">Premium</div>
+                        <div class="mt-auto d-grid mt-3">
+                            <button class="btn btn-carrinho add-carrinho btn-carrinho" data-id="24"
+                                data-nome="Batom SuperStay Maybelline" data-preco="30.00"
+                                data-imagem="https://www.cosmetis.com.br/media/catalog/product/cache/26d4a05fa16341dea4470cb3b852123c/7/7/7745856-maybelline_ink_vinyl_110.jpg">🛒
+                                Adicionar ao carrinho</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-6 col-lg-4 col-xl-3 produto-card" data-categoria="Premium" style="display: none;">
+                <div class="card card-produto h-100">
+                    <img src="https://cdn.awsli.com.br/600x700/2380/2380139/produto/280167583/008-6774t90384.jpg"
+                        class="produto-img imagem-click" data-bs-toggle="modal" data-bs-target="#imagemModal"
+                        data-img="https://cdn.awsli.com.br/600x700/2380/2380139/produto/280167583/008-6774t90384.jpg">
+                    <div class="card-body d-flex flex-column">
+                        <div class="produto-nome">Máscara de cílios Maybelline Falsies</div>
+                        <div class="descricao" data-bs-toggle="tooltip"
+                            data-bs-original-title="Fórmula que dá volume e alongamento, criando efeito de cílios postiços para um olhar marcante e cheio de impacto.">
+                            Fórmula que dá volume e alongamento, criando efeito de cílios postiços para um olhar
+                            marcante e cheio de impacto.</div>
+                        <div class="produto-preco mt-2">R$ 80,00</div>
+                        <div class="categoria">Premium</div>
+                        <div class="mt-auto d-grid mt-3">
+                            <button class="btn btn-carrinho add-carrinho btn-carrinho" data-id="25"
+                                data-nome="Máscara de cílios Maybelline Falsies" data-preco="80.00"
+                                data-imagem="https://cdn.awsli.com.br/600x700/2380/2380139/produto/280167583/008-6774t90384.jpg">🛒
+                                Adicionar ao carrinho</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL IMAGEM -->
+
+    <div class="modal fade" id="imagemModal">
+        <div class="modal-dialog modal-fullscreen">
+            <div class="modal-content bg-dark">
+                <div class="modal-header border-0">
+                    <button class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body d-flex justify-content-center align-items-center">
+                    <img id="imagemExpandida" style="max-width:100%;max-height:100%;object-fit:contain">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL CARRINHO -->
+
+    <div class="modal fade" id="carrinhoModal">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5>Carrinho</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="listaCarrinho"></div>
+                    <h5 class="mt-3">Total: R$ <span id="totalCarrinho">0.00</span></h5>
+                    <button id="btnFinalizar" class="btn btn-secondary w-100 mt-3" onclick="finalizarPedido()"
+                        disabled="">
+                        Finalizar pedido via WhatsApp
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        let whatsappNumero = 5521995004141;
+        const username = window.location.href.split("/")[window.location.href.split("/").length - 1];
+
+        /* IMAGEM MODAL */
+        document.querySelectorAll(".imagem-click").forEach(img =>
+            img.onclick = () => document.getElementById("imagemExpandida").src = img.dataset.img
+        );
+
+
+        /* INDEXEDDB */
+
+        let db;
+
+        let req = indexedDB.open("carrinhoDB", 1);
+
+        req.onupgradeneeded = e => {
+            db = e.target.result;
+            db.createObjectStore("itens", { keyPath: "id" });
+        };
+
+        req.onsuccess = e => {
+            db = e.target.result;
+            atualizarContador();
+        };
+
+
+        /* ADICIONAR */
+
+        const adicionarItem = prod => {
+            let tx = db.transaction("itens", "readwrite");
+            let store = tx.objectStore("itens");
+            store.get(prod.id).onsuccess = e => {
+                let item = e.target.result;
+                item ? (item.qtd++, store.put(item)) : store.put({ ...prod, qtd: 1 });
+            };
+            tx.oncomplete = atualizarContador;
+        };
+
+
+        /* BOTÕES ADICIONAR */
+
+        document.addEventListener("click", function (e) {
+            let btn = e.target.closest(".add-carrinho");
+            if (!btn) return;
+            let prod = {
+                id: btn.dataset.id,
+                nome: btn.dataset.nome,
+                preco: parseFloat(btn.dataset.preco),
+                imagem: btn.dataset.imagem
+            };
+            animarProduto(btn);
+            adicionarItem(prod);
+        });
+
+
+        /* ANIMAÇÃO */
+
+        function animarProduto(btn) {
+            let img = btn.closest(".card").querySelector("img");
+            let carrinho = document.getElementById("contadorCarrinho");
+            let clone = img.cloneNode(true);
+            let rect = img.getBoundingClientRect();
+
+            clone.classList.add("fly-img");
+            clone.style.left = rect.left + "px";
+            clone.style.top = rect.top + "px";
+            clone.style.width = rect.width + "px";
+
+            document.body.appendChild(clone);
+            let carrinhoRect = carrinho.getBoundingClientRect();
+
+            setTimeout(() => {
+                clone.style.left = carrinhoRect.left + "px";
+                clone.style.top = carrinhoRect.top + "px";
+                clone.style.width = "20px";
+                clone.style.opacity = "0.5";
+            }, 10);
+            setTimeout(() => clone.remove(), 800);
+        }
+
+
+        /* CONTADOR */
+        function atualizarContador() {
+            let tx = db.transaction("itens", "readonly");
+
+            tx.objectStore("itens").getAll().onsuccess = e => {
+                let total = 0;
+                e.target.result.forEach(i => total += i.qtd);
+                document.getElementById("contadorCarrinho").innerText = total;
+            };
+        }
+
+
+        /* CARREGAR CARRINHO */
+
+        function carregarCarrinho() {
+            let tx = db.transaction("itens", "readonly");
+
+            tx.objectStore("itens").getAll().onsuccess = e => {
+                let lista = document.getElementById("listaCarrinho");
+                lista.innerHTML = "";
+                let total = 0;
+                e.target.result.forEach(p => {
+                    total += p.preco * p.qtd;
+
+                    lista.innerHTML += `
+						<div class="d-flex align-items-center mb-3">
+						<img src="${p.imagem}" style="width:60px;height:60px;object-fit:contain">
+						<div class="ms-2 flex-fill">
+						<strong>${p.nome}</strong><br>
+						R$ ${p.preco.toFixed(2)}
+						<div>
+						<button class="btn btn-sm btn-secondary menos" data-id="${p.id}">-</button>
+						<span class="mx-2">${p.qtd}</span>
+						<button class="btn btn-sm btn-secondary mais" data-id="${p.id}">+</button>
+						</div>
+						</div>
+						<button class="btn btn-sm btn-danger remover" data-id="${p.id}">
+						✖
+						</button>
+						</div>`;
+                });
+
+                document.getElementById("totalCarrinho").innerText = total.toFixed(2);
+                let btnFinalizar = document.getElementById("btnFinalizar");
+
+                if (total === 0) {
+                    btnFinalizar.disabled = true;
+                    // remove verde e adiciona cinza
+                    btnFinalizar.classList.remove("btn-success");
+                    btnFinalizar.classList.add("btn-secondary");
+                } else {
+                    btnFinalizar.disabled = false;
+                    // remove cinza e adiciona verde
+                    btnFinalizar.classList.remove("btn-secondary");
+                    btnFinalizar.classList.add("btn-success");
+                }
+                ativarBotoes();
+            };
+        }
+
+        /* BOTÕES */
+        function ativarBotoes() {
+            document.querySelectorAll(".mais")
+                .forEach(btn => btn.onclick = () => alterarQtd(btn.dataset.id, 1));
+            document.querySelectorAll(".menos")
+                .forEach(btn => btn.onclick = () => alterarQtd(btn.dataset.id, -1));
+            document.querySelectorAll(".remover")
+                .forEach(btn => btn.onclick = () => remover(btn.dataset.id));
+        }
+
+
+        function alterarQtd(id, v) {
+            let tx = db.transaction("itens", "readwrite");
+            let store = tx.objectStore("itens");
+            store.get(id).onsuccess = e => {
+                let item = e.target.result;
+                item.qtd += v;
+                if (item.qtd <= 0)
+                    store.delete(id);
+                else
+                    store.put(item);
+            };
+
+            tx.oncomplete = () => {
+                carregarCarrinho();
+                atualizarContador();
+            };
+        }
+
+
+        function remover(id) {
+            let tx = db.transaction("itens", "readwrite");
+            tx.objectStore("itens").delete(id);
+
+            tx.oncomplete = () => {
+                carregarCarrinho();
+                atualizarContador();
+            };
+        }
+
+        /* ABRIR MODAL CARRINHO */
+
+        document.getElementById("carrinhoModal")
+            .addEventListener("shown.bs.modal", carregarCarrinho);
+
+        function buscarProdutos(texto) {
+            texto = texto.toLowerCase();
+            let produtos = document.querySelectorAll(".produto-card");
+
+            produtos.forEach(card => {
+                let nome = card.querySelector(".produto-nome").innerText.toLowerCase();
+                let descricao = card.querySelector(".descricao").innerText.toLowerCase();
+
+                if (nome.includes(texto) || descricao.includes(texto)) {
+                    card.style.display = "";
+                } else {
+                    card.style.display = "none";
+                }
+            });
+        }
+
+        let premiumAtivo = false;
+
+        function togglePremium() {
+            let cards = document.querySelectorAll(".produto-card");
+            let botao = document.getElementById("btnPremium");
+            premiumAtivo = !premiumAtivo;
+
+            cards.forEach(card => {
+                let categoria = (card.dataset.categoria || "").toLowerCase();
+                if (premiumAtivo) {
+                    card.style.display = categoria === "premium" ? "" : "none";
+                } else {
+                    card.style.display = categoria === "premium" ? "none" : "";
+                }
+            });
+            /* controlar animação */
+            if (premiumAtivo) {
+                botao.classList.remove("premium-pulse");
+            } else {
+                botao.classList.add("premium-pulse");
+            }
+            botao.innerText = premiumAtivo ? "↩ Voltar" : "⭐ Premium";
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            let cards = document.querySelectorAll(".produto-card");
+            cards.forEach(card => {
+                let categoria = (card.dataset.categoria || "").toLowerCase();
+                if (categoria === "premium") {
+                    card.style.display = "none";
+                }
+            });
+        });
+
+        /* TOOLTIP DESCRIÇÃO */
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        });
+
+
+        function finalizarPedido() {
+            let tx = db.transaction("itens", "readonly");
+            tx.objectStore("itens").getAll().onsuccess = e => {
+                let itens = e.target.result;
+                if (!itens || itens.length === 0) {
+                    alert("Seu carrinho está vazio.");
+                    return;
+                }
+                let msg = "Olá, gostaria de finalizar essa compra%0A%0A*Pedido*%0A%0A";
+                let total = 0;
+                itens.forEach(p => {
+                    let sub = p.preco * p.qtd;
+                    total += sub;
+                    msg += `• ${p.nome}%0AQtd: ${p.qtd}%0A%0A`;
+                });
+                window.open("https://wa.me/" + whatsappNumero + "?text=" + msg, "_blank");
+            };
+        }
+    </script>
+    </body>
+
+</html>
